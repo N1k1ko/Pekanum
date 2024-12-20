@@ -1,12 +1,11 @@
-﻿namespace Pekanum
-{
-    public partial class App : Application
-    {
-        public App()
-        {
-            InitializeComponent();
+﻿namespace Pekanum;
 
-            MainPage = new AppShell();
-        }
+public partial class App : Application
+{
+    public App()
+    {
+        InitializeComponent();
+
+        MainPage = new AppShell();
     }
 }

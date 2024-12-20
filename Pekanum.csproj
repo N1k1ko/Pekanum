@@ -64,9 +64,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Data\" />
 	  <Folder Include="Logic\" />
-	  <Folder Include="UI\" />
 	</ItemGroup>
 
 </Project>
