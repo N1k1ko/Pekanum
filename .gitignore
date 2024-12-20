@@ -1,0 +1,52 @@
+# .NET
+bin/
+obj/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# User-specific files
+.vs/
+.vscode/
+.idea/
+*.user
+*.userosscache
+*.suo
+*.userprefs
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows Installer log files
+*.cab
+*.pdb
+
+# JetBrains Rider
+.idea/
+
+# ASP.NET Core
+appsettings.Development.json
+
+# Windows specific
+Thumbs.db
+ehthumbs.db
+
+# SQLite database files
+*.db
+*.db-journal
+
+# Android specific
+*.apk
+*.ap_ 
+*.dex
+*.class
+*.keystore
+
+# iOS specific
+*.xcodeproj
+*.xcworkspace
+*.plist
+*.dsym/
