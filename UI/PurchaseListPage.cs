@@ -2,26 +2,26 @@ namespace Pekanum;
 
 public class PurchaseListPage : ContentPage
 {
-    private readonly PurchaseService _purchaseService; // Сервис для работы с базой данных
-    private readonly CollectionView _collectionView;   // Коллекция для обновления интерфейса
-    private List<Purchase> _purchases;                // Список покупок
+    private readonly PurchaseService _purchaseService; // Г‘ГҐГ°ГўГЁГ± Г¤Г«Гї Г°Г ГЎГ®ГІГ» Г± ГЎГ Г§Г®Г© Г¤Г Г­Г­Г»Гµ
+    private readonly CollectionView _collectionView;   // ГЉГ®Г«Г«ГҐГЄГ¶ГЁГї Г¤Г«Гї Г®ГЎГ­Г®ГўГ«ГҐГ­ГЁГї ГЁГ­ГІГҐГ°ГґГҐГ©Г±Г 
+    private List<Purchase> _purchases;                // Г‘ГЇГЁГ±Г®ГЄ ГЇГ®ГЄГіГЇГ®ГЄ
 
     public PurchaseListPage()
     {
-        // Получаем сервис из контейнера
+        // ГЏГ®Г«ГіГ·Г ГҐГ¬ Г±ГҐГ°ГўГЁГ± ГЁГ§ ГЄГ®Г­ГІГҐГ©Г­ГҐГ°Г 
         _purchaseService = App.ServiceProvider.GetRequiredService<PurchaseService>();
 
-        // Загружаем данные из базы
+        // Г‡Г ГЈГ°ГіГ¦Г ГҐГ¬ Г¤Г Г­Г­Г»ГҐ ГЁГ§ ГЎГ Г§Г»
         _purchases = _purchaseService.GetPurchases();
 
-        // Создание CollectionView для отображения списка
+        // Г‘Г®Г§Г¤Г Г­ГЁГҐ CollectionView Г¤Г«Гї Г®ГІГ®ГЎГ°Г Г¦ГҐГ­ГЁГї Г±ГЇГЁГ±ГЄГ 
         _collectionView = new()
         {
             ItemsSource = _purchases,
             ItemTemplate = new DataTemplate(() =>
             {
                 var bind = new Binding(".");
-                // Горизонтальный StackLayout для строки
+                // ГѓГ®Г°ГЁГ§Г®Г­ГІГ Г«ГјГ­Г»Г© StackLayout Г¤Г«Гї Г±ГІГ°Г®ГЄГЁ
                 StackLayout rowLayout = new()
                 {
                     Orientation = StackOrientation.Horizontal,
@@ -29,11 +29,11 @@ public class PurchaseListPage : ContentPage
                     Padding = new Thickness(5),
                 };
 
-                // Метка с информацией о покупке
+                // ГЊГҐГІГЄГ  Г± ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГҐГ© Г® ГЇГ®ГЄГіГЇГЄГҐ
                 Label infoLabel = new();
                 infoLabel.SetBinding(Label.TextProperty, bind);
 
-                // Кнопки действий
+                // ГЉГ­Г®ГЇГЄГЁ Г¤ГҐГ©Г±ГІГўГЁГ©
                 StackLayout actionsLayout = new()
                 {
                     Orientation = StackOrientation.Horizontal,
@@ -42,13 +42,13 @@ public class PurchaseListPage : ContentPage
                     {
                         new Button
                         {
-                            Text = "Изменить",
+                            Text = "Г€Г§Г¬ГҐГ­ГЁГІГј",
                             CommandParameter = bind,
                             Command = new Command<Purchase>(EditPurchase)
                         },
                         new Button
                         {
-                            Text = "Удалить",
+                            Text = "Г“Г¤Г Г«ГЁГІГј",
                             CommandParameter = bind,
                             Command = new Command<Purchase>(DeletePurchase)
                         }
@@ -64,25 +64,25 @@ public class PurchaseListPage : ContentPage
 
         Content = _collectionView;
     }
-    //TODO Buttons
+
     private void EditPurchase(Purchase purchase)
     {
-        // Логика изменения записи
-        DisplayAlert("Изменение", $"Изменить: {purchase.Name}", "ОК");
+        // Г‹Г®ГЈГЁГЄГ  ГЁГ§Г¬ГҐГ­ГҐГ­ГЁГї Г§Г ГЇГЁГ±ГЁ
+        DisplayAlert("Г€Г§Г¬ГҐГ­ГҐГ­ГЁГҐ", $"Г€Г§Г¬ГҐГ­ГЁГІГј: {purchase.Name}", "ГЋГЉ");
     }
 
     private async void DeletePurchase(Purchase purchase)
     {
-        bool confirm = await DisplayAlert("Подтверждение", $"Удалить {purchase.Name}?", "Да", "Нет");
+        bool confirm = await DisplayAlert("ГЏГ®Г¤ГІГўГҐГ°Г¦Г¤ГҐГ­ГЁГҐ", $"Г“Г¤Г Г«ГЁГІГј {purchase.Name}?", "Г„Г ", "ГЌГҐГІ");
         if (confirm)
         {
-            // Удаляем из базы данных
+            // Г“Г¤Г Г«ГїГҐГ¬ ГЁГ§ ГЎГ Г§Г» Г¤Г Г­Г­Г»Гµ
             _purchaseService.DeletePurchase(purchase.Id);
 
-            // Обновляем список и интерфейс
+            // ГЋГЎГ­Г®ГўГ«ГїГҐГ¬ Г±ГЇГЁГ±Г®ГЄ ГЁ ГЁГ­ГІГҐГ°ГґГҐГ©Г±
             _purchases.Remove(purchase);
-            _collectionView.ItemsSource = null; // Обнуляем источник, чтобы сбросить привязку
-            _collectionView.ItemsSource = _purchases; // Привязываем обновленный список
+            _collectionView.ItemsSource = null; // ГЋГЎГ­ГіГ«ГїГҐГ¬ ГЁГ±ГІГ®Г·Г­ГЁГЄ, Г·ГІГ®ГЎГ» Г±ГЎГ°Г®Г±ГЁГІГј ГЇГ°ГЁГўГїГ§ГЄГі
+            _collectionView.ItemsSource = _purchases; // ГЏГ°ГЁГўГїГ§Г»ГўГ ГҐГ¬ Г®ГЎГ­Г®ГўГ«ГҐГ­Г­Г»Г© Г±ГЇГЁГ±Г®ГЄ
         }
     }
 }
