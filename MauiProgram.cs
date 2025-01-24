@@ -14,9 +14,6 @@ namespace Pekanum
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
-            builder.Services.AddSingleton(
-                new DatabaseService(Path.Combine(FileSystem.AppDataDirectory, "Pekanum.db")));
-
 #if DEBUG
             builder.Logging.AddDebug();
 #endif

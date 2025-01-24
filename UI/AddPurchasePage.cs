@@ -30,7 +30,7 @@ public class AddPurchasePage : ContentPage
             };
 
             // Сохраняем покупку в базу данных
-            var dbService = DependencyService.Get<DatabaseService>();
+            var dbService = App.ServiceProvider.GetRequiredService<DatabaseService>();
             dbService.SavePurchase(purchase);
 
             // Переход на главный экран

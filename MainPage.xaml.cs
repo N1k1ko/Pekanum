@@ -4,19 +4,10 @@ public partial class MainPage : ContentPage
 {
     public MainPage()
     {
-        // Путь для долгого хранения бд
-        //string dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Pekanum.db");
-        
-        // Получаем путь к кэшу для Android
-        string dbPath = Path.Combine(FileSystem.CacheDirectory, "Pekanum.db");
-        
-        // Регистрация DatabaseService в DependencyService
-        DependencyService.RegisterSingleton(new DatabaseService(dbPath));
-
-        Button addButton = new() {Text = "Добавить покупку"};
+        Button addButton = new() { Text = "Добавить покупку" };
         addButton.Clicked += OnAddPurchaseClicked;
 
-        Button viewButton = new() {Text = "Список покупок"};
+        Button viewButton = new() { Text = "Список покупок" };
         viewButton.Clicked += OnViewPurchasesClicked;
 
         // StackLayout для вертикального расположения элементов
@@ -31,16 +22,9 @@ public partial class MainPage : ContentPage
         Content = layout;
     }
 
-    // Обработчики нажатий на кнопки
-    private async void OnAddPurchaseClicked(object sender, EventArgs e)
-    {
-        // Переход на страницу добавления покупки
-        await Navigation.PushAsync(new AddPurchasePage());
-    }
+    private async void OnAddPurchaseClicked(object sender, EventArgs e) =>
+        await Shell.Current.GoToAsync(nameof(AddPurchasePage));
 
-    private async void OnViewPurchasesClicked(object sender, EventArgs e)
-    {
-        // Переход на страницу с просмотром списка покупок
-        await Navigation.PushAsync(new PurchaseListPage());
-    }
+    private async void OnViewPurchasesClicked(object sender, EventArgs e) =>
+        await Shell.Current.GoToAsync(nameof(PurchaseListPage));
 }
