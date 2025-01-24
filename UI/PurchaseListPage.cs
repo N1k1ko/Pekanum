@@ -1,48 +1,88 @@
-using System.Reflection;
-
 namespace Pekanum;
 
 public class PurchaseListPage : ContentPage
 {
+    private readonly PurchaseService _purchaseService; // Сервис для работы с базой данных
+    private readonly CollectionView _collectionView;   // Коллекция для обновления интерфейса
+    private List<Purchase> _purchases;                // Список покупок
+
     public PurchaseListPage()
     {
-        // Получаем данные из базы
-        var purchaseService = App.ServiceProvider.GetRequiredService<PurchaseService>();
-        List<Purchase> purchases = purchaseService.GetPurchases();
+        // Получаем сервис из контейнера
+        _purchaseService = App.ServiceProvider.GetRequiredService<PurchaseService>();
 
-        // Создание ListView для отображения списка
-        ListView listView = new()
+        // Загружаем данные из базы
+        _purchases = _purchaseService.GetPurchases();
+
+        // Создание CollectionView для отображения списка
+        _collectionView = new()
         {
-            ItemsSource = purchases,
+            ItemsSource = _purchases,
             ItemTemplate = new DataTemplate(() =>
             {
-                StackLayout layout = new() { Orientation = StackOrientation.Vertical };
-
-                // Получаем все публичные свойства класса Purchase с помощью рефлексии
-                var properties = typeof(Purchase).GetProperties(BindingFlags.Public | BindingFlags.Instance);
-
-                // Создаем Label для каждого свойства
-                foreach (var property in properties.Skip(1))
+                var bind = new Binding(".");
+                // Горизонтальный StackLayout для строки
+                StackLayout rowLayout = new()
                 {
-                    Label label = new();
-                    label.SetBinding(Label.TextProperty, new Binding(property.Name));
+                    Orientation = StackOrientation.Horizontal,
+                    Spacing = 10,
+                    Padding = new Thickness(5),
+                };
 
-                    layout.Children.Add(label);
-                }
+                // Метка с информацией о покупке
+                Label infoLabel = new();
+                infoLabel.SetBinding(Label.TextProperty, bind);
 
-                return new ViewCell { View = layout };
+                // Кнопки действий
+                StackLayout actionsLayout = new()
+                {
+                    Orientation = StackOrientation.Horizontal,
+                    Spacing = 5,
+                    Children =
+                    {
+                        new Button
+                        {
+                            Text = "Изменить",
+                            CommandParameter = bind,
+                            Command = new Command<Purchase>(EditPurchase)
+                        },
+                        new Button
+                        {
+                            Text = "Удалить",
+                            CommandParameter = bind,
+                            Command = new Command<Purchase>(DeletePurchase)
+                        }
+                    }
+                };
+
+                rowLayout.Children.Add(infoLabel);
+                rowLayout.Children.Add(actionsLayout);
+
+                return rowLayout;
             })
         };
 
-        // Размещение элементов в StackLayout
-        StackLayout layout = new()
-        {
-            Children = { listView },
-            Padding = new Thickness(20),
-            Spacing = 10
-        };
+        Content = _collectionView;
+    }
 
-        // Установка содержимого страницы
-        Content = layout;
+    private void EditPurchase(Purchase purchase)
+    {
+        // Логика изменения записи
+        DisplayAlert("Изменение", $"Изменить: {purchase.Name}", "ОК");
+    }
+
+    private async void DeletePurchase(Purchase purchase)
+    {
+        bool confirm = await DisplayAlert("Подтверждение", $"Удалить {purchase.Name}?", "Да", "Нет");
+        if (confirm)
+        {
+            // Удаляем из базы данных
+            _purchaseService.DeletePurchase(purchase.Id);
+
+            // Обновляем список и интерфейс
+            _purchases.Remove(purchase);
+            _collectionView.ItemsSource = null; // Обнуляем источник, чтобы сбросить привязку
+            _collectionView.ItemsSource = _purchases; // Привязываем обновленный список
+        }
     }
 }
