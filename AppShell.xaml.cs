@@ -6,7 +6,6 @@ public partial class AppShell : Shell
     {
         InitializeComponent();
 
-        // Добавление маршрутов для навигации
         Routing.RegisterRoute(nameof(AddPurchasePage), typeof(AddPurchasePage));
         Routing.RegisterRoute(nameof(PurchaseListPage), typeof(PurchaseListPage));
         Routing.RegisterRoute(nameof(StatsPage), typeof(StatsPage));

@@ -8,11 +8,9 @@ public partial class App : Application
     {
         InitializeComponent();
 
-        // Настройка DI
         var services = new ServiceCollection();
         ConfigureServices(services);
 
-        // Разрешаем зависимость
         ServiceProvider = services.BuildServiceProvider();
 
         MainPage = new AppShell();
@@ -20,11 +18,7 @@ public partial class App : Application
 
     private void ConfigureServices(IServiceCollection services)
     {
-        // Путь для долгого хранения бд
-        //string dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Pekanum.db");
-        // Получаем путь к кэшу для Android
-        string dbPath = Path.Combine(FileSystem.CacheDirectory, "Pekanum.db");
-        // Регистрируем зависимости
+        string dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Pekanum.db");
         services.AddSingleton<DatabaseService>(provider => new DatabaseService(dbPath));
 
         services.AddSingleton<PurchaseService>(provider => new PurchaseService(ServiceProvider.GetRequiredService<DatabaseService>()));

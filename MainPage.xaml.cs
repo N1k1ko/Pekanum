@@ -16,7 +16,6 @@ public partial class MainPage : ContentPage
         statButton.Clicked += async (sender, args) =>
             await Shell.Current.GoToAsync(nameof(StatsPage)); ;
 
-        // StackLayout для вертикального расположения элементов
         StackLayout layout = new()
         {
             Children = { addButton, viewButton, statButton },
@@ -24,7 +23,6 @@ public partial class MainPage : ContentPage
             Spacing = 10
         };
 
-        // Установка главного содержимого страницы
         Content = layout;
     }
 }
