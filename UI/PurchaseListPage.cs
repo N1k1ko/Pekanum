@@ -1,3 +1,5 @@
+using System.Reflection;
+
 namespace Pekanum;
 
 public class PurchaseListPage : ContentPage
@@ -13,24 +15,20 @@ public class PurchaseListPage : ContentPage
         {
             ItemsSource = purchases,
             ItemTemplate = new DataTemplate(() =>
-            { 
-                Label nameLabel = new();
-                nameLabel.SetBinding(Label.TextProperty, "Name");
+            {
+                StackLayout layout = new() { Orientation = StackOrientation.Vertical };
 
-                Label priceLabel = new();
-                priceLabel.SetBinding(Label.TextProperty, "Price");
+                // Получаем все публичные свойства класса Purchase с помощью рефлексии
+                var properties = typeof(Purchase).GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
-                Label categoryLabel = new();
-                categoryLabel.SetBinding(Label.TextProperty, "Category");
-
-                Label dateLabel = new();
-                dateLabel.SetBinding(Label.TextProperty, "Date");
-
-                StackLayout layout = new()
+                // Создаем Label для каждого свойства
+                foreach (var property in properties.Skip(1))
                 {
-                    Children = { nameLabel, priceLabel, categoryLabel, dateLabel },
-                    Orientation = StackOrientation.Vertical
-                };
+                    Label label = new();
+                    label.SetBinding(Label.TextProperty, new Binding(property.Name));
+
+                    layout.Children.Add(label);
+                }
 
                 return new ViewCell { View = layout };
             })
