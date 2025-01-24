@@ -13,17 +13,23 @@ public class PurchaseListPage : ContentPage
         {
             ItemsSource = purchases,
             ItemTemplate = new DataTemplate(() =>
-            {
+            { 
                 Label nameLabel = new();
                 nameLabel.SetBinding(Label.TextProperty, "Name");
 
                 Label priceLabel = new();
                 priceLabel.SetBinding(Label.TextProperty, "Price");
 
+                Label categoryLabel = new();
+                categoryLabel.SetBinding(Label.TextProperty, "Category");
+
+                Label dateLabel = new();
+                dateLabel.SetBinding(Label.TextProperty, "Date");
+
                 StackLayout layout = new()
                 {
-                    Children = { nameLabel, priceLabel },
-                    Orientation = StackOrientation.Horizontal
+                    Children = { nameLabel, priceLabel, categoryLabel, dateLabel },
+                    Orientation = StackOrientation.Vertical
                 };
 
                 return new ViewCell { View = layout };

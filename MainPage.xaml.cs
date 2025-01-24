@@ -4,18 +4,19 @@ public partial class MainPage : ContentPage
 {
     public MainPage()
     {
-        // Кнопка для добавления покупки
-        Button addButton = new()
-        {
-            Text = "Добавить покупку"
-        };
+        // Путь для долгого хранения бд
+        //string dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Pekanum.db");
+        
+        // Получаем путь к кэшу для Android
+        string dbPath = Path.Combine(FileSystem.CacheDirectory, "Pekanum.db");
+        
+        // Регистрация DatabaseService в DependencyService
+        DependencyService.RegisterSingleton(new DatabaseService(dbPath));
+
+        Button addButton = new() {Text = "Добавить покупку"};
         addButton.Clicked += OnAddPurchaseClicked;
 
-        // Кнопка для просмотра списка покупок
-        Button viewButton = new()
-        {
-            Text = "Список покупок"
-        };
+        Button viewButton = new() {Text = "Список покупок"};
         viewButton.Clicked += OnViewPurchasesClicked;
 
         // StackLayout для вертикального расположения элементов
