@@ -2,10 +2,19 @@ namespace Pekanum;
 
 public class AddPurchasePage : ContentPage
 {
+    private readonly PurchaseService _purchaseService;
+
     public AddPurchasePage()
     {
-        // Поля ввода
-        Entry nameEntry = new() { Placeholder = "Название продукта" };
+        _purchaseService = App.ServiceProvider.GetRequiredService<PurchaseService>();
+
+        Picker namePicker = new()
+        {
+            Title = "Выберите название",
+            ItemsSource = _purchaseService.Names
+        };
+        Entry nameEntry = new() { Placeholder = "Название продукта", IsVisible = false };
+
 
         Entry priceEntry = new()
         {
@@ -13,52 +22,78 @@ public class AddPurchasePage : ContentPage
             Keyboard = Keyboard.Numeric
         };
 
-        Entry categoryEntry = new() { Placeholder = "Категория" };
+        Picker categoryPicker = new()
+        {
+            Title = "Выберите категорию",
+            ItemsSource = _purchaseService.Categories
+        };
+        Entry categoryEntry = new() { Placeholder = "Категория", IsVisible = false };
 
-        // Элемент для выбора даты
         DatePicker datePicker = new()
         {
-            Date = DateTime.Now, // По умолчанию текущая дата
-            Format = "d MMM yyyy" // Формат отображаемой даты
+            Date = DateTime.Now,
+            Format = "d MMM yyyy"
         };
 
-        // Кнопка для сохранения
         Button saveButton = new() { Text = "Сохранить" };
 
         saveButton.Clicked += async (sender, e) =>
         {
-            // Логика сохранения в базу данных
+            string selectedName = namePicker.SelectedItem?.ToString() == "Новое наименование"
+                ? nameEntry.Text
+                : namePicker.SelectedItem?.ToString();
+            string selectedCategory = categoryPicker.SelectedItem?.ToString() == "Новая категория"
+                ? categoryEntry.Text
+                : categoryPicker.SelectedItem?.ToString();
+
             Purchase purchase = new()
             {
-                Name = nameEntry.Text,
+                Name = selectedName,
                 Price = decimal.TryParse(priceEntry.Text, out var price) ? price : 0,
-                Category = categoryEntry.Text,
+                Category = selectedCategory,
                 Date = datePicker.Date
             };
             try
             {
-                // Сохраняем покупку в базу данных
-                var purchaseService = App.ServiceProvider.GetRequiredService<PurchaseService>();
-                purchaseService.AddPurchase(purchase);
-                // Переход на главный экран
+                _purchaseService.AddPurchase(purchase);
                 await Navigation.PopAsync();
             }
             catch (ArgumentException ex)
             {
-                // Обработка ошибок валидации
                 await DisplayAlert("Ошибка", ex.Message, "OK");
             }
         };
+        namePicker.SelectedIndexChanged += (sender, e) =>
+        {
+            if (namePicker.SelectedItem?.ToString() == "Новое наименование")
+                nameEntry.IsVisible = true;
+            else
+                nameEntry.IsVisible = false;
+        };
+        categoryPicker.SelectedIndexChanged += (sender, e) =>
+        {
+            if (categoryPicker.SelectedItem?.ToString() == "Новая категория")
+                categoryEntry.IsVisible = true;
+            else
+                categoryEntry.IsVisible = false;
+        };
 
-        // Размещение элементов в StackLayout
         StackLayout layout = new()
         {
-            Children = { nameEntry, priceEntry, categoryEntry, datePicker, saveButton },
+            Children =
+            {
+                namePicker,
+                nameEntry,
+                priceEntry,
+                categoryPicker,
+                categoryEntry,
+                datePicker,
+                saveButton
+            },
             Padding = new Thickness(20),
             Spacing = 10
         };
 
-        // Установка содержимого страницы
         Content = layout;
     }
 }
