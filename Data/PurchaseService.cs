@@ -3,24 +3,37 @@
 public class PurchaseService
 {
     private readonly DatabaseService _databaseService;
+    private readonly LocalStorageService _localStorageService;
+    public List<string> Categories { get; }
+    public List<string> Names { get; }
 
     public PurchaseService(DatabaseService databaseService)
     {
         _databaseService = databaseService;
+        _localStorageService = App.ServiceProvider.GetRequiredService<LocalStorageService>();
+
+        Categories = _localStorageService.LoadList("Categories");
+        Names = _localStorageService.LoadList("Names");
     }
 
-    // Метод для добавления новой покупки с валидацией
     public string AddPurchase(Purchase purchase)
     {
-        // Валидация данных
         ValidatePurchase(purchase);
 
-        // Сохранение покупки в базу данных
         _databaseService.SavePurchase(purchase);
+        if(!Categories.Contains(purchase.Category!))
+        {
+            Categories.Add(purchase.Category!);
+            _localStorageService.SaveList("Categories", Categories);
+        }
+        if (!Names.Contains(purchase.Name!))
+        {
+            Names.Add(purchase.Name!);
+            _localStorageService.SaveList("Names", Names);
+        }
         return "Покупка успешно добавлена!";
     }
 
-    // Метод для валидации данных покупки
     private void ValidatePurchase(Purchase purchase)
     {
         if (string.IsNullOrEmpty(purchase.Name))
@@ -36,17 +49,14 @@ public class PurchaseService
             throw new ArgumentException("Дата не может быть в будущем.");
     }
 
-    // Метод для проверки наличия уже существующей покупки в базе данных
     private bool IsPurchaseExist(Purchase purchase)
     {
         var existingPurchases = _databaseService.GetPurchases();
         return existingPurchases.Any(p => p.Name == purchase.Name && p.Category == purchase.Category);
     }
 
-    // Метод для получения списка всех покупок
     public List<Purchase> GetPurchases() => _databaseService.GetPurchases();
 
-    // Метод для удаления покупки по ID
     public string DeletePurchase(int id)
     {
         var purchase = _databaseService.GetPurchases().FirstOrDefault(p => p.Id == id)

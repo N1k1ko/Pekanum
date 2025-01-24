@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-
-namespace Pekanum;
+﻿namespace Pekanum;
 
 public partial class MainPage : ContentPage
 {

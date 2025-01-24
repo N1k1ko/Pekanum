@@ -28,5 +28,7 @@ public partial class App : Application
         services.AddSingleton<DatabaseService>(provider => new DatabaseService(dbPath));
 
         services.AddSingleton<PurchaseService>(provider => new PurchaseService(ServiceProvider.GetRequiredService<DatabaseService>()));
+
+        services.AddSingleton<LocalStorageService>(provider => new LocalStorageService());
     }
 }
