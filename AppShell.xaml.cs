@@ -1,10 +1,13 @@
-﻿namespace Pekanum
+﻿namespace Pekanum;
+
+public partial class AppShell : Shell
 {
-    public partial class AppShell : Shell
+    public AppShell()
     {
-        public AppShell()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+
+        // Добавление маршрутов для навигации
+        Routing.RegisterRoute(nameof(AddPurchasePage), typeof(AddPurchasePage));
+        Routing.RegisterRoute(nameof(PurchaseListPage), typeof(PurchaseListPage));
     }
 }

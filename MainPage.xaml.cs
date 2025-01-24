@@ -1,25 +1,26 @@
-﻿namespace Pekanum
+﻿namespace Pekanum;
+
+public partial class MainPage : ContentPage
 {
-    public partial class MainPage : ContentPage
+    public MainPage()
     {
-        int count = 0;
+        Button addButton = new() { Text = "Добавить покупку" };
+        addButton.Clicked += async (sender, args) =>
+            await Shell.Current.GoToAsync(nameof(AddPurchasePage));
 
-        public MainPage()
+        Button viewButton = new() { Text = "Список покупок" };
+        viewButton.Clicked += async (sender, args) =>
+            await Shell.Current.GoToAsync(nameof(PurchaseListPage));
+
+        // StackLayout для вертикального расположения элементов
+        StackLayout layout = new()
         {
-            InitializeComponent();
-        }
+            Children = { addButton, viewButton },
+            Padding = new Thickness(20),
+            Spacing = 10
+        };
 
-        private void OnCounterClicked(object sender, EventArgs e)
-        {
-            count++;
-
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
-            else
-                CounterBtn.Text = $"Clicked {count} times";
-
-            SemanticScreenReader.Announce(CounterBtn.Text);
-        }
+        // Установка главного содержимого страницы
+        Content = layout;
     }
-
 }
