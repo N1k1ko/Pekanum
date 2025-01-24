@@ -15,6 +15,13 @@ public class AddPurchasePage : ContentPage
 
         Entry categoryEntry = new() { Placeholder = "Категория" };
 
+        // Элемент для выбора даты
+        DatePicker datePicker = new()
+        {
+            Date = DateTime.Now, // По умолчанию текущая дата
+            Format = "d MMM yyyy" // Формат отображаемой даты
+        };
+
         // Кнопка для сохранения
         Button saveButton = new() { Text = "Сохранить" };
 
@@ -26,7 +33,7 @@ public class AddPurchasePage : ContentPage
                 Name = nameEntry.Text,
                 Price = decimal.TryParse(priceEntry.Text, out var price) ? price : 0,
                 Category = categoryEntry.Text,
-                Date = DateTime.Now
+                Date = datePicker.Date
             };
             try
             {
@@ -46,7 +53,7 @@ public class AddPurchasePage : ContentPage
         // Размещение элементов в StackLayout
         StackLayout layout = new()
         {
-            Children = { nameEntry, priceEntry, categoryEntry, saveButton },
+            Children = { nameEntry, priceEntry, categoryEntry, datePicker, saveButton },
             Padding = new Thickness(20),
             Spacing = 10
         };

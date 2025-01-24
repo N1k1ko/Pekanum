@@ -64,7 +64,7 @@ public class PurchaseListPage : ContentPage
 
         Content = _collectionView;
     }
-
+    //TODO Buttons
     private void EditPurchase(Purchase purchase)
     {
         // Логика изменения записи
