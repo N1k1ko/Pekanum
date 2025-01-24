@@ -10,4 +10,10 @@ public class Purchase
     public decimal Price { get; set; }
     public string? Category { get; set; }
     public DateTime Date { get; set; }
+
+    public override string ToString() =>
+        $"{Name}\n" +
+        $"{Price} руб\n" +
+        $"{Category}\n" +
+        $"{Date:dd.MM.yyyy}";
 }
