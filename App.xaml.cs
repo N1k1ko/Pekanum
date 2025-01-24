@@ -26,5 +26,7 @@ public partial class App : Application
         string dbPath = Path.Combine(FileSystem.CacheDirectory, "Pekanum.db");
         // Регистрируем зависимости
         services.AddSingleton<DatabaseService>(provider => new DatabaseService(dbPath));
+
+        services.AddSingleton<PurchaseService>(provider => new PurchaseService(ServiceProvider.GetRequiredService<DatabaseService>()));
     }
 }

@@ -28,13 +28,19 @@ public class AddPurchasePage : ContentPage
                 Category = categoryEntry.Text,
                 Date = DateTime.Now
             };
-
-            // Сохраняем покупку в базу данных
-            var dbService = App.ServiceProvider.GetRequiredService<DatabaseService>();
-            dbService.SavePurchase(purchase);
-
-            // Переход на главный экран
-            await Navigation.PopAsync();
+            try
+            {
+                // Сохраняем покупку в базу данных
+                var purchaseService = App.ServiceProvider.GetRequiredService<PurchaseService>();
+                purchaseService.AddPurchase(purchase);
+                // Переход на главный экран
+                await Navigation.PopAsync();
+            }
+            catch (ArgumentException ex)
+            {
+                // Обработка ошибок валидации
+                await DisplayAlert("Ошибка", ex.Message, "OK");
+            }
         };
 
         // Размещение элементов в StackLayout

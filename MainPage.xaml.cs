@@ -5,10 +5,12 @@ public partial class MainPage : ContentPage
     public MainPage()
     {
         Button addButton = new() { Text = "Добавить покупку" };
-        addButton.Clicked += OnAddPurchaseClicked;
+        addButton.Clicked += async (sender, args) =>
+            await Shell.Current.GoToAsync(nameof(AddPurchasePage));
 
         Button viewButton = new() { Text = "Список покупок" };
-        viewButton.Clicked += OnViewPurchasesClicked;
+        viewButton.Clicked += async (sender, args) =>
+            await Shell.Current.GoToAsync(nameof(PurchaseListPage));
 
         // StackLayout для вертикального расположения элементов
         StackLayout layout = new()
@@ -21,10 +23,4 @@ public partial class MainPage : ContentPage
         // Установка главного содержимого страницы
         Content = layout;
     }
-
-    private async void OnAddPurchaseClicked(object sender, EventArgs e) =>
-        await Shell.Current.GoToAsync(nameof(AddPurchasePage));
-
-    private async void OnViewPurchasesClicked(object sender, EventArgs e) =>
-        await Shell.Current.GoToAsync(nameof(PurchaseListPage));
 }

@@ -7,8 +7,8 @@ public class PurchaseListPage : ContentPage
     public PurchaseListPage()
     {
         // Получаем данные из базы
-        var dbService = App.ServiceProvider.GetRequiredService<DatabaseService>();
-        List<Purchase> purchases = dbService.GetPurchases();
+        var purchaseService = App.ServiceProvider.GetRequiredService<PurchaseService>();
+        List<Purchase> purchases = purchaseService.GetPurchases();
 
         // Создание ListView для отображения списка
         ListView listView = new()
