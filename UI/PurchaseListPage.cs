@@ -1,48 +1,79 @@
-using System.Reflection;
-
 namespace Pekanum;
 
 public class PurchaseListPage : ContentPage
 {
+    private readonly PurchaseService _purchaseService;
+    private readonly CollectionView _collectionView;
+    private List<Purchase> _purchases;
+
     public PurchaseListPage()
     {
-        // Получаем данные из базы
-        var purchaseService = App.ServiceProvider.GetRequiredService<PurchaseService>();
-        List<Purchase> purchases = purchaseService.GetPurchases();
+        _purchaseService = App.ServiceProvider.GetRequiredService<PurchaseService>();
 
-        // Создание ListView для отображения списка
-        ListView listView = new()
+        _purchases = _purchaseService.GetPurchases();
+
+        _collectionView = new()
         {
-            ItemsSource = purchases,
+            ItemsSource = _purchases,
             ItemTemplate = new DataTemplate(() =>
             {
-                StackLayout layout = new() { Orientation = StackOrientation.Vertical };
-
-                // Получаем все публичные свойства класса Purchase с помощью рефлексии
-                var properties = typeof(Purchase).GetProperties(BindingFlags.Public | BindingFlags.Instance);
-
-                // Создаем Label для каждого свойства
-                foreach (var property in properties.Skip(1))
+                var bind = new Binding(".");
+                StackLayout rowLayout = new()
                 {
-                    Label label = new();
-                    label.SetBinding(Label.TextProperty, new Binding(property.Name));
+                    Orientation = StackOrientation.Horizontal,
+                    Spacing = 10,
+                    Padding = new Thickness(5),
+                };
 
-                    layout.Children.Add(label);
-                }
+                Label infoLabel = new();
+                infoLabel.SetBinding(Label.TextProperty, bind);
 
-                return new ViewCell { View = layout };
+                StackLayout actionsLayout = new()
+                {
+                    Orientation = StackOrientation.Horizontal,
+                    Spacing = 5,
+                    Children =
+                    {
+                        new Button
+                        {
+                            Text = "РР·РјРµРЅРёС‚СЊ",
+                            CommandParameter = bind,
+                            Command = new Command<Purchase>(EditPurchase)
+                        },
+                        new Button
+                        {
+                            Text = "РЈРґР°Р»РёС‚СЊ",
+                            CommandParameter = bind,
+                            Command = new Command<Purchase>(DeletePurchase)
+                        }
+                    }
+                };
+
+                rowLayout.Children.Add(infoLabel);
+                rowLayout.Children.Add(actionsLayout);
+
+                return rowLayout;
             })
         };
 
-        // Размещение элементов в StackLayout
-        StackLayout layout = new()
-        {
-            Children = { listView },
-            Padding = new Thickness(20),
-            Spacing = 10
-        };
+        Content = _collectionView;
+    }
 
-        // Установка содержимого страницы
-        Content = layout;
+    private void EditPurchase(Purchase purchase)
+    {
+        DisplayAlert("РР·РјРµРЅРµРЅРёРµ", $"РР·РјРµРЅРёС‚СЊ: {purchase.Name}", "РћРљ");
+    }
+
+    private async void DeletePurchase(Purchase purchase)
+    {
+        bool confirm = await DisplayAlert("РџРѕРґС‚РІРµСЂР¶РґРµРЅРёРµ", $"РЈРґР°Р»РёС‚СЊ {purchase.Name}?", "Р”Р°", "РќРµС‚");
+        if (confirm)
+        {
+            _purchaseService.DeletePurchase(purchase.Id);
+
+            _purchases.Remove(purchase);
+            _collectionView.ItemsSource = null;
+            _collectionView.ItemsSource = _purchases;
+        }
     }
 }
